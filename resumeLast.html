@@ -2,6 +2,7 @@
 <html>
 <head>
    <script src="https://at.alicdn.com/t/font_1952016_x279jmggr9m.js"></script>
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/tween.js/17.1.1/Tween.min.js" ></script>
    <style type="text/css">
     .icon {
        width: 1em; height: 1em;
@@ -9,25 +10,93 @@
        fill: currentColor;
        overflow: hidden;
     }
+    .loading{
+    width:200px;
+    height:200px;
+    position:relative;
+  }
+  .loading::before,.loading::after{
+    content:'';
+    position:absolute;
+    width:10px;
+    height: 10px;
+  background: black;
+  border-radius: 50%;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  margin: auto;
+  animation: s 1.5s linear infinite;
+  }
+  .loading::after{
+    animation-delay:0.75s
+  }
+  @keyframes s{
+      0%{
+          width: 0px;
+        height:0 px;
+          opacity: 1;
+      }
+      100%{
+          width: 100px;
+          height: 100px;
+          opacity: 0;
+      }
+  }
+
+  .site-welcome{  
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #888;
+    z-index: 1;
+    justify-content: center;
+    align-items: center;
+
+}
+.site-welcome.active{
+    display:flex;
+}
 </style> 
    <title>我的网页</title>
-    <link rel="stylesheet" href="styleLast.css">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<div class="topNavBar ">
+  <div id="siteWelcome" class="site-welcome active">
+    <div class="loading"></div>
+  </div> 
+<div id="topNavbar" class="topNavBar ">
   <div class="topNavBar-inner clearfix">
         <a href="#" class="logo" style="float: left;">
             <!-- <img src="#" alt="logo">  -->
             <span class="rs">RS</span> 
             <span class="card">card</span>
         </a>
-    <nav style="float: right;">  
+    <nav class="menu" style="float: right;">  
        <ul class="clearfix" >
                       
-        <li><a href="#">关于</a></li>
-        <li><a href="#">技能</a></li>
-        <li><a href="#">作品</a></li>
-        <li><a href="#">博客</a></li>
+        <li><a href="#siteAbout">关于</a></li>
+        <li><a href="#siteSkills">技能</a></li>
+        <li >
+          <a href="#siteWorks" >作品</a>
+          <ul class="submenu ">
+            <Li>作品1</Li>
+            <Li>作品2</Li>
+            <Li>作品3</Li>
+          </ul>
+        </li>
+        <li >
+          <a href="#" >博客</a>
+          <ul class="submenu">
+            <Li>博客1</Li>
+            <Li>博客2</Li>
+            <Li>博客3</Li>
+          </ul>
+        </li>
         <li><a href="#">日历</a></li>
         <li><a href="#">联系方式</a></li>
         <li><a href="#">其他</a></li>
@@ -40,9 +109,9 @@
       <div class="mask "></div>
     </div>
     <main>
-        <div class="usercard" >
+        <div id="siteAbout" class="usercard" >
         <div class="pictureAndText clearfix">
-        <div class="picture"><img src="./img/avatar.jpg" width="299px" height="347px" alt="头像"></div>
+        <div class="picture"><img src="img/avatar.jpg" width="299px" height="347px" alt="头像"></div>
         <div class="text">
             <div class="profile">
             <span class="welcome">Hello
@@ -103,7 +172,7 @@
     王凯旋，前端工程师，xxxxxxx，xxxxxxx <br>
     xxxxxxx，xxx，xxxxxxx       
 </p>
-<section class="skills">
+<section id="siteSkills" class="skills">
   <h2>技能</h2>
   <ol class="clearfix">
     <li>
@@ -146,7 +215,7 @@
 </section>
     </main>
 
-      <section  class="portfolio">
+      <section  class="portfolio" id="siteWorks">
         <h2 >作品集</h2>
         <nav>
           <ol class="clearfix">
@@ -183,6 +252,56 @@
         </div>
   
       </section>
-</body>
-</html>
+      <script>
+     function animate(time) {
+	requestAnimationFrame(animate)
+	TWEEN.update(time)
+}
+requestAnimationFrame(animate)
 
+        setTimeout(function(){
+       siteWelcome.classList.remove('active')   
+        },1000)
+        window.onscroll = function(xx){
+          if(window.scrollY>0){
+            topNavbar.classList.add('sticky')
+          }else{
+            topNavbar.classList.remove('sticky')
+          }
+        } 
+        let liTags = document.querySelectorAll('nav.menu > ul > li')
+        console.log(liTags)
+        for(let i=0;i<liTags.length;i++){
+          liTags[i].onmouseenter = function(x){
+           x.currentTarget.classList.add('active')
+          }  
+          liTags[i].onmouseleave = function(x){
+           x.currentTarget.classList.remove('active')
+          }    
+        }
+        let aTags =  document.querySelectorAll('nav.menu>ul>li>a')
+        for(let i =0;i<aTags.length;i++){
+          aTags[i].onclick =function(x){
+            x.preventDefault() 
+            let a = x.currentTarget
+            let href = a.getAttribute('href')
+            let element = document.querySelector(href)
+            let top = element.offsetTop
+          
+            let currentTop = window.scrollY
+            let targetTop = top - 80
+            let s = targetTop - currentTop
+            var coords = {y: currentTop}
+            var t = Math.abs((s/100)*300)
+            if(t>500){t=500}
+            
+            var tween = new TWEEN.Tween(coords) 
+	            .to({y: targetTop}, t)
+	            .easing(TWEEN.Easing.Quadratic.InOut) 
+	            .onUpdate(function(){
+	            window.scrollTo(0,coords.y)
+	            })
+	            .start();    
+           }
+         } 
+        </script>

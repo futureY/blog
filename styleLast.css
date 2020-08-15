@@ -26,12 +26,20 @@ hr{
     display: block;
     clear: both;
 }
+.topNavBar.sticky{
+    background: white;
+    z-index: 1;
+    box-shadow: 0 0 10px rgba(0,0,0, 0.25);
+    color: #3d4451;    
+}
 .topNavBar{
     padding: 20px 0 20px 0;
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
+    transition: all 1s;
+    color:#B7B7B7;
 }
 .topNavBar-inner{
     padding: 0 16px 0 16px ;
@@ -50,10 +58,11 @@ hr{
     float: left;
     margin-left: 17px;
     margin-right: 17px;
+    position: relative;
     /* border: 1px solid gray; */
 }
 .topNavBar nav>ul>li>a{
-    color:#B7B7B7;
+   color: inherit;
     font-size: 12px;
     text-decoration: none;
     font-weight: bold;
@@ -62,10 +71,55 @@ hr{
     padding-top:5px ;
     padding-bottom: 5px;
     display: block;
+    position: relative;
 
 }
-.topNavBar nav>ul>li>a:hover{
- border-bottom: 3px solid #e06567;   
+.topNavBar nav>ul>li.active>a::after{
+    content: '';
+    display: block;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background: red;
+    height: 3px;  
+    animation: menuslide 0.3s;
+}
+@keyframes menuslide{
+    0%{
+        width: 0;
+    }
+    100%{
+       width: 100%;
+    }
+}
+.topNavBar .submenu{
+display: none;
+position: absolute;
+left: 0;
+top: 100%;
+background: white;
+color: #3d4451;
+box-shadow: 0 0 5px rgba(0,0,0, 0.5 );
+}
+.topNavBar li.active> .submenu{
+    display: block;
+    animation: submenuSlide .3s;
+  }
+  @keyframes submenuSlide{
+    0%{
+    margin-left: -100%;
+  
+    }
+    100%{
+        margin-left:0% ;
+   
+    }
+  }
+.topNavBar .submenu>li{
+    white-space: nowrap;
+    padding:5px 10px;
+    
 }
 .topNavBar .log  {
     font-size: 24px;
@@ -322,3 +376,4 @@ section.portfolio .works>.small{
     position: absolute;
 
 }
+
